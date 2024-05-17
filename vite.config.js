@@ -8,9 +8,6 @@ export default defineConfig({
     react(),
     eslint({ lintOnStart: true, emitWarning: true, emitError: true }),
   ],
-  build: {
-    outDir: "Y:/Reports/DataPage",
-    emptyOutDir: true,
-  },
-  base: "./",
+  build: { outDir: "docs" },
+  base: "",
 });
