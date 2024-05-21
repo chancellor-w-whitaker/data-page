@@ -20,11 +20,13 @@ const constants = {
       fillColor: colors.nonServiceRegionCounty,
       color: colors.border,
       fillOpacity: 1,
+      weight: 1,
     },
     serviceRegionCounty: {
       fillColor: colors.serviceRegionCounty,
       color: colors.border,
       fillOpacity: 1,
+      weight: 1,
     },
     highlightedLayer: { color: "#ffe484", fillOpacity: 0.7 },
   },
@@ -32,19 +34,23 @@ const constants = {
     { color: colors.serviceRegionCounty, label: "Service region" },
     { color: colors.nonServiceRegionCounty, label: "Non-service region" },
   ],
+  popups: {
+    easternKentuckyUniversity: {
+      coordinates: coordinates.easternKentuckyUniversity,
+      content: "Eastern Kentucky University",
+    },
+  },
   tooltipOptions: {
-    className: "pe-auto leaflet-tooltip-hover",
+    className: "leaflet-tooltip-inactive",
     direction: "center",
     permanent: true,
   },
   mapOptions: {
     center: coordinates.elizabethtown,
-    dragging: false,
-    zoom: 8,
   },
 };
 
-const { tooltipOptions, mapOptions, legendRows, styles } = constants;
+const { tooltipOptions, mapOptions, legendRows, styles, popups } = constants;
 
 const style = (feature) => {
   return hasServiceRegionCounty(feature)
@@ -65,26 +71,14 @@ export class MapWidget {
 
     const map = this.map;
 
-    L.marker(coordinates.easternKentuckyUniversity)
+    L.marker(popups.easternKentuckyUniversity.coordinates)
       .addTo(map)
-      .bindPopup("Eastern Kentucky University")
+      .bindPopup(popups.easternKentuckyUniversity.content)
       .openPopup();
-
-    function highlightFeature(e) {
-      const layer = e.target;
-
-      layer.setStyle(styles.highlightedLayer);
-
-      layer.bringToFront();
-    }
 
     const geojsonOptions = { onEachFeature, style };
 
     const geojson = L.geoJson(geojsonFeature, geojsonOptions).addTo(map);
-
-    function resetHighlight(e) {
-      geojson.resetStyle(e.target);
-    }
 
     function zoomMapToFit() {
       const bounds = geojson.getBounds();
@@ -96,22 +90,97 @@ export class MapWidget {
 
     zoomMapToFit();
 
-    const mapHandlers = { resize: zoomMapToFit };
+    const mapListeners = { resize: zoomMapToFit };
 
-    map.on(mapHandlers);
+    map.on(mapListeners);
+
+    // ! info
+
+    const info = L.control();
+
+    info.onAdd = function (map) {
+      this._div = L.DomUtil.create("div", "info"); // create a div with a class "info"
+      this.update();
+      return this._div;
+    };
+
+    // method that we will use to update the control based on feature properties passed
+    info.update = function (props = {}) {
+      const {
+        [countyProperty]: county,
+        INTPTLAT: lat = "",
+        INTPTLON: lon = "",
+      } = props;
+
+      const latitude = `${lat.substring(1)}° ${lat[0] === "+" ? "N" : "S"}`;
+
+      const longitude = `${lon.substring(1)}° ${lon[0] === "+" ? "E" : "W"}`;
+
+      this._div.innerHTML = county
+        ? `<b>${county}</b><br />${latitude}, ${longitude}`
+        : "Hover over a county";
+    };
+
+    info.addTo(map);
+
+    function highlightFeature(e) {
+      const [layer, feature] = [e.target, e.target.feature];
+
+      layer.setStyle({
+        fillOpacity: 0.7,
+        color: "#0d6efd",
+        weight: 3,
+      });
+
+      layer.bringToFront();
+
+      layer.unbindTooltip();
+
+      layer.bindTooltip(getCountyIdentifier(feature), {
+        ...tooltipOptions,
+        className: "leaflet-tooltip-active",
+      });
+
+      info.update(layer.feature.properties);
+    }
+
+    function resetHighlight(e) {
+      const [layer, feature] = [e.target, e.target.feature];
+
+      geojson.resetStyle(layer);
+
+      layer.unbindTooltip();
+
+      layer.bindTooltip(getCountyIdentifier(feature), {
+        ...tooltipOptions,
+        className: "leaflet-tooltip-inactive",
+      });
+
+      info.update();
+    }
+
+    function openInNewTab(url) {
+      window.open(url, "_blank").focus();
+    }
 
     function onEachFeature(feature, layer) {
-      const layerHandlers = {
+      const name = getCountyIdentifier(feature);
+
+      const layerListeners = {
+        click: () =>
+          openInNewTab(
+            `https://irserver2.eku.edu/reports/sas/counties/data/${name}%20Kentucky.html`
+          ),
         mouseover: highlightFeature,
         mouseout: resetHighlight,
       };
 
-      layer.on(layerHandlers);
+      layer.on(layerListeners);
 
-      layer.bindTooltip(getCountyIdentifier(feature), tooltipOptions);
+      layer.bindTooltip(name, tooltipOptions);
     }
 
-    // legend
+    // ! legend
 
     const legend = L.control({ position: "bottomright" });
 

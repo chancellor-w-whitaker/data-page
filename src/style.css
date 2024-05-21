@@ -25,14 +25,13 @@
   color: #777;
 }
 
-.leaflet-tooltip-hover:not(:hover) {
-  background-color: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  z-index: 0;
+.leaflet-tooltip-inactive {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
-.leaflet-tooltip-hover {
+.leaflet-tooltip-active {
   z-index: 1;
 }
 
