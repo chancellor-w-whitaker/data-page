@@ -28,18 +28,17 @@ const constants = {
       fillOpacity: 1,
       weight: 1,
     },
-    highlightedLayer: { color: "#ffe484", fillOpacity: 0.7 },
   },
-  legendRows: [
-    { color: colors.serviceRegionCounty, label: "Service region" },
-    { color: colors.nonServiceRegionCounty, label: "Non-service region" },
-  ],
   popups: {
     easternKentuckyUniversity: {
       coordinates: coordinates.easternKentuckyUniversity,
       content: "Eastern Kentucky University",
     },
   },
+  legendRows: [
+    { label: "Service region", color: "pink" },
+    { label: "Non-service region", color: "blue" },
+  ],
   tooltipOptions: {
     className: "leaflet-tooltip-inactive",
     direction: "center",
@@ -53,9 +52,14 @@ const constants = {
 const { tooltipOptions, mapOptions, legendRows, styles, popups } = constants;
 
 const style = (feature) => {
-  return hasServiceRegionCounty(feature)
-    ? styles.serviceRegionCounty
-    : styles.nonServiceRegionCounty;
+  if (hasServiceRegionCounty(feature)) {
+    return { color: "pink" };
+  } else {
+    return { color: "blue" };
+  }
+  // return hasServiceRegionCounty(feature)
+  //   ? styles.serviceRegionCounty
+  //   : styles.nonServiceRegionCounty;
 };
 
 const getCountyIdentifier = (feature) => {
@@ -64,6 +68,24 @@ const getCountyIdentifier = (feature) => {
     .filter((word) => word.toLowerCase() !== "county")
     .join(" ");
 };
+
+function getColor(d) {
+  return d > 1000
+    ? "#800026"
+    : d > 500
+    ? "#BD0026"
+    : d > 200
+    ? "#E31A1C"
+    : d > 100
+    ? "#FC4E2A"
+    : d > 50
+    ? "#FD8D3C"
+    : d > 20
+    ? "#FEB24C"
+    : d > 10
+    ? "#FED976"
+    : "#FFEDA0";
+}
 
 export class MapWidget {
   constructor(domNode, geojsonFeature) {
@@ -75,6 +97,17 @@ export class MapWidget {
       .addTo(map)
       .bindPopup(popups.easternKentuckyUniversity.content)
       .openPopup();
+
+    function style(feature) {
+      return {
+        color: hasServiceRegionCounty(feature) ? "black" : "white",
+        fillOpacity: hasServiceRegionCounty(feature) ? "1" : "0.7",
+        // dashArray: hasServiceRegionCounty(feature) ? "1" : "4",
+        fillColor: getColor(feature.properties.enrollment),
+        weight: hasServiceRegionCounty(feature) ? 3 : 1,
+        opacity: 1,
+      };
+    }
 
     const geojsonOptions = { onEachFeature, style };
 
@@ -105,21 +138,28 @@ export class MapWidget {
     };
 
     // method that we will use to update the control based on feature properties passed
-    info.update = function (props = {}) {
-      const {
-        [countyProperty]: county,
-        INTPTLAT: lat = "",
-        INTPTLON: lon = "",
-      } = props;
-
-      const latitude = `${lat.substring(1)}° ${lat[0] === "+" ? "N" : "S"}`;
-
-      const longitude = `${lon.substring(1)}° ${lon[0] === "+" ? "E" : "W"}`;
-
-      this._div.innerHTML = county
-        ? `<b>${county}</b><br />${latitude}, ${longitude}`
-        : "Hover over a county";
+    info.update = function (props) {
+      this._div.innerHTML = `<div class="text-end"><h4>Enrollment</h4><h4>${
+        props ? props[countyProperty] : "Hover Over a County"
+      }</h4><h4>${props ? props.enrollment.toLocaleString() : "?"}</h4></div>`;
     };
+
+    // method that we will use to update the control based on feature properties passed
+    // info.update = function (props = {}) {
+    //   const {
+    //     [countyProperty]: county,
+    //     INTPTLAT: lat = "",
+    //     INTPTLON: lon = "",
+    //   } = props;
+
+    //   const latitude = `${lat.substring(1)}° ${lat[0] === "+" ? "N" : "S"}`;
+
+    //   const longitude = `${lon.substring(1)}° ${lon[0] === "+" ? "E" : "W"}`;
+
+    //   this._div.innerHTML = county
+    //     ? `<b>${county}</b><br />${latitude}, ${longitude}`
+    //     : "Hover over a county";
+    // };
 
     info.addTo(map);
 
@@ -127,8 +167,7 @@ export class MapWidget {
       const [layer, feature] = [e.target, e.target.feature];
 
       layer.setStyle({
-        fillOpacity: 0.7,
-        color: "#0d6efd",
+        color: "blue",
         weight: 3,
       });
 
@@ -136,7 +175,7 @@ export class MapWidget {
 
       layer.unbindTooltip();
 
-      layer.bindTooltip(getCountyIdentifier(feature), {
+      layer.bindTooltip(`${getCountyIdentifier(feature)}`, {
         ...tooltipOptions,
         className: "leaflet-tooltip-active",
       });
@@ -155,6 +194,10 @@ export class MapWidget {
         ...tooltipOptions,
         className: "leaflet-tooltip-inactive",
       });
+
+      if (!hasServiceRegionCounty(feature)) {
+        layer.bringToBack();
+      }
 
       info.update();
     }
@@ -182,19 +225,21 @@ export class MapWidget {
 
     // ! legend
 
-    const legend = L.control({ position: "bottomright" });
+    var legend = L.control({ position: "bottomright" });
 
     legend.onAdd = function (map) {
-      const div = L.DomUtil.create("div", "info legend");
+      var div = L.DomUtil.create("div", "info legend"),
+        grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+        labels = [];
 
       // loop through our density intervals and generate a label with a colored square for each interval
-      for (let i = 0; i < legendRows.length; i++) {
+      for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
           '<i style="background:' +
-          legendRows[i].color +
+          getColor(grades[i] + 1) +
           '"></i> ' +
-          legendRows[i].label +
-          "<br>";
+          grades[i] +
+          (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
       }
 
       return div;

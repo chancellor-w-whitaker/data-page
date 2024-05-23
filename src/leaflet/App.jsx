@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { hasServiceRegionCounty } from "./utils/exports";
+import { pivotData } from "../js/pivotData";
 import { useData } from "./utils/useData";
 import Map from "./Map";
 
@@ -26,10 +27,66 @@ const validateData = (data) => ({
   type: typeValidator(data),
 });
 
+const findSum = (array) => array.reduce((partialSum, a) => partialSum + a, 0);
+
 export default function App() {
   const geojsonFeature = useData(geojsonUrl);
 
-  const data = useMemo(() => validateData(geojsonFeature), [geojsonFeature]);
+  const enrollmentData = useData("data/enrollment.json");
 
-  return <Map geojsonFeature={data} key={Math.random()} />;
+  const countyEnrollment = useMemo(() => {
+    const [pivotField, measures, groupBy, data] = [
+      "county",
+      ["Current"],
+      [],
+      enrollmentData,
+    ];
+
+    const { topRowData } = pivotData({
+      pivotField,
+      measures,
+      groupBy,
+      data,
+    });
+
+    return topRowData[0];
+  }, [enrollmentData]);
+
+  const geojsonData = useMemo(
+    () => validateData(geojsonFeature),
+    [geojsonFeature]
+  );
+
+  const geojsonDataWithEnrollment = useMemo(() => {
+    const { features } = geojsonData;
+
+    const keys = Object.keys(countyEnrollment);
+
+    const shouldProceed = features.length > 0 && keys.length > 0;
+
+    if (shouldProceed) {
+      features.forEach((feature) => {
+        const {
+          properties: { NAMELSAD: countyName },
+        } = feature;
+
+        const countyID = countyName
+          .split(" ")
+          .filter((word) => word.toLowerCase() !== "county")
+          .join(" ");
+
+        const match = countyEnrollment[countyID];
+
+        const mapObject = feature.properties;
+
+        const enrollment = typeof match === "object" ? match.Current : 0;
+
+        mapObject.enrollment = enrollment;
+      });
+    }
+
+    return geojsonData;
+  }, [countyEnrollment, geojsonData]);
+
+  return <Map geojsonFeature={geojsonDataWithEnrollment} key={Math.random()} />;
 }
