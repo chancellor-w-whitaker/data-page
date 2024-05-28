@@ -1,4 +1,0 @@
-{
-  "extends": ["react-app", "plugin:perfectionist/recommended-line-length"],
-  "ignorePatterns": ["dist/"]
-}

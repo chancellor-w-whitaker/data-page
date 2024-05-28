@@ -27,8 +27,6 @@ const validateData = (data) => ({
   type: typeValidator(data),
 });
 
-const findSum = (array) => array.reduce((partialSum, a) => partialSum + a, 0);
-
 export default function App() {
   const geojsonFeature = useData(geojsonUrl);
 

@@ -2,72 +2,153 @@ import "leaflet/dist/leaflet.css";
 import * as L from "leaflet";
 
 import { hasServiceRegionCounty, countyProperty } from "./exports";
+import { findSum } from "../../js/findSum";
+
+const colors = {
+  nonServiceRegion: "red",
+  serviceRegion: "blue",
+  hovered: "yellow",
+  info: "black",
+};
+
+const generateInfoRowHtml = (title, number, color = colors.info) =>
+  `<div class="d-flex gap-2">
+    <h4 class="me-auto" style="color: ${color};">${title}:</h4>
+    <h4 style="color: ${color};">${number.toLocaleString()}</h4>
+  </div>`;
+
+const findSums = (geojson) => {
+  const serviceRegionSum = findSum(
+    geojson.features
+      .filter(hasServiceRegionCounty)
+      .map((feature) => feature.properties.enrollment)
+  );
+
+  const nonServiceRegionSum = findSum(
+    geojson.features
+      .filter((feature) => !hasServiceRegionCounty(feature))
+      .map((feature) => feature.properties.enrollment)
+  );
+
+  const combinedSum = serviceRegionSum + nonServiceRegionSum;
+
+  const serviceRegionRow = generateInfoRowHtml(
+    "Service region",
+    serviceRegionSum,
+    colors.serviceRegion
+  );
+
+  const nonServiceRegionRow = generateInfoRowHtml(
+    "Non-service region",
+    nonServiceRegionSum,
+    colors.nonServiceRegion
+  );
+
+  const currentEnrollmentRow = generateInfoRowHtml(
+    "Current enrollment",
+    combinedSum
+  );
+
+  const rows = [currentEnrollmentRow, nonServiceRegionRow, serviceRegionRow];
+
+  return rows;
+};
+
+const legendPosition = "bottomright";
+
+const highlightedStyle = { color: colors.hovered, weight: 3 };
+
+const classNames = {
+  nonHovered: "leaflet-tooltip-inactive",
+  hovered: "leaflet-tooltip-active",
+};
 
 const coordinates = {
   easternKentuckyUniversity: [37.736, -84.2987],
   elizabethtown: [37.7031, -85.8649],
 };
 
-const colors = {
-  nonServiceRegionCounty: "#eeeeee",
-  serviceRegionCounty: "#dd6d9e",
-  border: "#7c7c7c",
-};
-
-const constants = {
-  styles: {
-    nonServiceRegionCounty: {
-      fillColor: colors.nonServiceRegionCounty,
-      color: colors.border,
-      fillOpacity: 1,
-      weight: 1,
-    },
-    serviceRegionCounty: {
-      fillColor: colors.serviceRegionCounty,
-      color: colors.border,
-      fillOpacity: 1,
-      weight: 1,
-    },
-  },
-  popups: {
-    easternKentuckyUniversity: {
-      coordinates: coordinates.easternKentuckyUniversity,
-      content: "Eastern Kentucky University",
-    },
-  },
-  legendRows: [
-    { label: "Service region", color: "pink" },
-    { label: "Non-service region", color: "blue" },
-  ],
-  tooltipOptions: {
-    className: "leaflet-tooltip-inactive",
-    direction: "center",
-    permanent: true,
-  },
-  mapOptions: {
-    center: coordinates.elizabethtown,
+const popups = {
+  easternKentuckyUniversity: {
+    coordinates: coordinates.easternKentuckyUniversity,
+    content: "Eastern Kentucky University",
   },
 };
 
-const { tooltipOptions, mapOptions, legendRows, styles, popups } = constants;
-
-const style = (feature) => {
-  if (hasServiceRegionCounty(feature)) {
-    return { color: "pink" };
-  } else {
-    return { color: "blue" };
-  }
-  // return hasServiceRegionCounty(feature)
-  //   ? styles.serviceRegionCounty
-  //   : styles.nonServiceRegionCounty;
+const tooltipOptions = {
+  className: classNames.nonHovered,
+  direction: "center",
+  permanent: true,
 };
 
-const getCountyIdentifier = (feature) => {
-  return feature.properties[countyProperty]
+const mapOptions = { center: coordinates.elizabethtown };
+
+const generateCountyUrl = (county) =>
+  `https://irserver2.eku.edu/reports/sas/counties/data/${county}%20Kentucky.html`;
+
+const generateLegendRowHtml = (array, index) =>
+  '<i style="background:' +
+  getColor(array[index] + 1) +
+  '"></i> ' +
+  array[index] +
+  (array[index + 1] ? "&ndash;" + array[index + 1] + "<br>" : "+");
+
+const generateInfo = (props, rows) => {
+  const topRows = rows.join("");
+
+  const [title, number, textColor] = [
+    props
+      ? props[countyProperty]
+          .split(" ")
+          .map((word, index) => (index === 0 ? word : word.toLowerCase()))
+          .join(" ")
+      : "Hover over a county",
+    props ? props.enrollment.toLocaleString() : "?",
+    !props
+      ? colors.info
+      : hasServiceRegionCounty({ properties: props })
+      ? colors.serviceRegion
+      : colors.nonServiceRegion,
+  ];
+
+  const bottomRow = generateInfoRowHtml(title, number, textColor);
+
+  return `<div>${topRows}${bottomRow}</div>`;
+};
+
+const getCountyIdentifier = (feature) =>
+  feature.properties[countyProperty]
     .split(" ")
     .filter((word) => word.toLowerCase() !== "county")
     .join(" ");
-};
+
+const maroonColors = [
+  "#861f41",
+  "#923554",
+  "#9e4c67",
+  "#aa627a",
+  "#b6798d",
+  "#c38fa0",
+  "#cfa5b3",
+  "#dbbcc6",
+];
+
+const getColor2 = (d) =>
+  d > 1000
+    ? maroonColors[0]
+    : d > 500
+    ? maroonColors[1]
+    : d > 200
+    ? maroonColors[2]
+    : d > 100
+    ? maroonColors[3]
+    : d > 50
+    ? maroonColors[4]
+    : d > 20
+    ? maroonColors[5]
+    : d > 10
+    ? maroonColors[6]
+    : maroonColors[7];
 
 function getColor(d) {
   return d > 1000
@@ -87,9 +168,23 @@ function getColor(d) {
     : "#FFEDA0";
 }
 
+const openInNewTab = (url) => window.open(url, "_blank").focus();
+
+const getFeatureStyle = (feature) => ({
+  color: hasServiceRegionCounty(feature)
+    ? colors.serviceRegion
+    : colors.nonServiceRegion,
+  fillOpacity: hasServiceRegionCounty(feature) ? 1 : 0.75,
+  fillColor: getColor(feature.properties.enrollment),
+  weight: hasServiceRegionCounty(feature) ? 3 : 1,
+  opacity: 1,
+});
+
 export class MapWidget {
   constructor(domNode, geojsonFeature) {
     this.map = L.map(domNode, mapOptions);
+
+    const sumRows = findSums(geojsonFeature);
 
     const map = this.map;
 
@@ -99,14 +194,7 @@ export class MapWidget {
       .openPopup();
 
     function style(feature) {
-      return {
-        color: hasServiceRegionCounty(feature) ? "black" : "white",
-        fillOpacity: hasServiceRegionCounty(feature) ? "1" : "0.7",
-        // dashArray: hasServiceRegionCounty(feature) ? "1" : "4",
-        fillColor: getColor(feature.properties.enrollment),
-        weight: hasServiceRegionCounty(feature) ? 3 : 1,
-        opacity: 1,
-      };
+      return getFeatureStyle(feature);
     }
 
     const geojsonOptions = { onEachFeature, style };
@@ -139,37 +227,15 @@ export class MapWidget {
 
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
-      this._div.innerHTML = `<div class="text-end"><h4>Enrollment</h4><h4>${
-        props ? props[countyProperty] : "Hover Over a County"
-      }</h4><h4>${props ? props.enrollment.toLocaleString() : "?"}</h4></div>`;
+      this._div.innerHTML = generateInfo(props, sumRows);
     };
-
-    // method that we will use to update the control based on feature properties passed
-    // info.update = function (props = {}) {
-    //   const {
-    //     [countyProperty]: county,
-    //     INTPTLAT: lat = "",
-    //     INTPTLON: lon = "",
-    //   } = props;
-
-    //   const latitude = `${lat.substring(1)}° ${lat[0] === "+" ? "N" : "S"}`;
-
-    //   const longitude = `${lon.substring(1)}° ${lon[0] === "+" ? "E" : "W"}`;
-
-    //   this._div.innerHTML = county
-    //     ? `<b>${county}</b><br />${latitude}, ${longitude}`
-    //     : "Hover over a county";
-    // };
 
     info.addTo(map);
 
     function highlightFeature(e) {
       const [layer, feature] = [e.target, e.target.feature];
 
-      layer.setStyle({
-        color: "blue",
-        weight: 3,
-      });
+      layer.setStyle(highlightedStyle);
 
       layer.bringToFront();
 
@@ -177,7 +243,7 @@ export class MapWidget {
 
       layer.bindTooltip(`${getCountyIdentifier(feature)}`, {
         ...tooltipOptions,
-        className: "leaflet-tooltip-active",
+        className: classNames.hovered,
       });
 
       info.update(layer.feature.properties);
@@ -192,7 +258,7 @@ export class MapWidget {
 
       layer.bindTooltip(getCountyIdentifier(feature), {
         ...tooltipOptions,
-        className: "leaflet-tooltip-inactive",
+        className: classNames.nonHovered,
       });
 
       if (!hasServiceRegionCounty(feature)) {
@@ -202,18 +268,11 @@ export class MapWidget {
       info.update();
     }
 
-    function openInNewTab(url) {
-      window.open(url, "_blank").focus();
-    }
-
     function onEachFeature(feature, layer) {
       const name = getCountyIdentifier(feature);
 
       const layerListeners = {
-        click: () =>
-          openInNewTab(
-            `https://irserver2.eku.edu/reports/sas/counties/data/${name}%20Kentucky.html`
-          ),
+        click: () => openInNewTab(generateCountyUrl(name)),
         mouseover: highlightFeature,
         mouseout: resetHighlight,
       };
@@ -225,21 +284,15 @@ export class MapWidget {
 
     // ! legend
 
-    var legend = L.control({ position: "bottomright" });
+    var legend = L.control({ position: legendPosition });
 
     legend.onAdd = function (map) {
       var div = L.DomUtil.create("div", "info legend"),
-        grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-        labels = [];
+        levels = [0, 10, 20, 50, 100, 200, 500, 1000];
 
       // loop through our density intervals and generate a label with a colored square for each interval
-      for (var i = 0; i < grades.length; i++) {
-        div.innerHTML +=
-          '<i style="background:' +
-          getColor(grades[i] + 1) +
-          '"></i> ' +
-          grades[i] +
-          (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
+      for (var index = 0; index < levels.length; index++) {
+        div.innerHTML += generateLegendRowHtml(levels, index);
       }
 
       return div;
