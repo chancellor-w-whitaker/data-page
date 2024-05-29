@@ -5,7 +5,6 @@ import React from "react";
 // import Map from "./Map";
 import { WidthProvider } from "./WidthContext";
 import App from "./wrapper/components/App";
-import LeafletApp from "./leaflet/App";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
