@@ -28,7 +28,7 @@ const masonryItems = [
     // link: "/leaflet",
     description: "Coming soon!",
     title: "KY Service Region",
-    to: "/leaflet",
+    // to: "/leaflet",
     secret: true,
   },
   {

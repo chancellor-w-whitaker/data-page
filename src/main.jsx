@@ -21,7 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             }
             path="/"
           ></Route>
-          <Route element={<LeafletApp></LeafletApp>} path="/leaflet"></Route>
+          {/* <Route element={<LeafletApp></LeafletApp>} path="/leaflet"></Route> */}
         </Routes>
       </Router>
     </WidthProvider>
