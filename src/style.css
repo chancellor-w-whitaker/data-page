@@ -1,3 +1,6 @@
+@import url("https://fonts.cdnfonts.com/css/questrial");
+@import url("https://fonts.cdnfonts.com/css/avenir");
+
 @media (min-width: 992px) {
   .leaflet-tooltip-inactive,
   .leaflet-tooltip-active {

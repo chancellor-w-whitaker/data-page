@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import React from "react";
 
-// import Map from "./Map";
 import { WidthProvider } from "./WidthContext";
 import App from "./wrapper/components/App";
+import LeafletApp from "./leaflet/App";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -20,7 +20,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             }
             path="/"
           ></Route>
-          {/* <Route element={<LeafletApp></LeafletApp>} path="/leaflet"></Route> */}
+          <Route element={<LeafletApp></LeafletApp>} path="/leaflet"></Route>
         </Routes>
       </Router>
     </WidthProvider>
