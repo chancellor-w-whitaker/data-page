@@ -1,5 +1,5 @@
 import { useDeferredValue, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { Masonry } from "react-plock";
 
 import { TooltipContent, TooltipTrigger, Tooltip } from "./Tooltip";
@@ -384,7 +384,8 @@ const Card = ({
     <>
       <Tooltip>
         <TooltipTrigger>
-          {to ? <Link to={to}>{anchor}</Link> : anchor}
+          {/* {to ? <Link to={to}>{anchor}</Link> : anchor} */}
+          {anchor}
         </TooltipTrigger>
         {description && (
           <TooltipContent>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import React from "react";
 
@@ -9,7 +9,11 @@ import LeafletApp from "./leaflet/App";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <WidthProvider>
-      <Router>
+      <App
+        department={"Institutional Effectiveness & Research"}
+        heading={"Data Pages"}
+      />
+      {/* <Router>
         <Routes>
           <Route
             element={
@@ -22,7 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           ></Route>
           <Route element={<LeafletApp></LeafletApp>} path="/leaflet"></Route>
         </Routes>
-      </Router>
+      </Router> */}
     </WidthProvider>
   </React.StrictMode>
 );
