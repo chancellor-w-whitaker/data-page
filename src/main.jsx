@@ -9,10 +9,11 @@ import LeafletApp from "./leaflet/App";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <WidthProvider>
-      <App
+      {/* <App
         department={"Institutional Effectiveness & Research"}
         heading={"Data Pages"}
-      />
+      /> */}
+      <LeafletApp></LeafletApp>
       {/* <Router>
         <Routes>
           <Route

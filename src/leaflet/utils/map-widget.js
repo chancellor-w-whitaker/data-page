@@ -5,8 +5,8 @@ import { hasServiceRegionCounty, countyProperty } from "./exports";
 import { findSum } from "../../js/findSum";
 
 const colors = {
-  nonServiceRegion: "red",
-  serviceRegion: "blue",
+  nonServiceRegion: "#009681",
+  serviceRegion: "#861F41",
   hovered: "yellow",
   info: "black",
 };
