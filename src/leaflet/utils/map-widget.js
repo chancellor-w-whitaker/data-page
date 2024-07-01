@@ -45,7 +45,7 @@ const findSums = (geojson) => {
   );
 
   const currentEnrollmentRow = generateInfoRowHtml(
-    "Current enrollment",
+    "Fall 2024 enrollment",
     combinedSum
   );
 
@@ -58,9 +58,11 @@ const legendPosition = "bottomright";
 
 const highlightedStyle = { color: colors.hovered, weight: 3 };
 
+// const linkClasses = "link-underline-primary";
+
 const classNames = {
-  nonHovered: "leaflet-tooltip-inactive",
-  hovered: "leaflet-tooltip-active",
+  nonHovered: `leaflet-tooltip-inactive`,
+  hovered: `leaflet-tooltip-active`,
 };
 
 const coordinates = {

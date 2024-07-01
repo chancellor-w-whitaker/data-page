@@ -60,7 +60,7 @@ const masonryItems = [
     link: "https://www.irserver2.eku.edu/reports/deans/collegedepartment",
     image: "./images/collegedepartment.png",
     title: "College & Department Metrics",
-    secret: false,
+    secret: true,
   },
   {
     description:
