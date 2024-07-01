@@ -21,15 +21,15 @@ const masonryItems = [
     link: "https://commondataset.org/",
     image: "./images/cds.svg",
     title: "Common Data Set",
-    secret: false,
+    secret: true,
   },
   {
-    image: "./images/service-region.png",
     description:
       "Interact with a Colorful Heatmap of KY Counties Fall 2024 Enrollment",
-    title: "KY Service Region",
     link: "https://www.irserver2.eku.edu/reports/serviceregion/",
-    secret: true,
+    image: "./images/service-region.png",
+    title: "KY Service Region",
+    secret: false,
   },
   {
     description:
