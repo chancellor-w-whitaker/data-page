@@ -190,10 +190,10 @@ export class MapWidget {
 
     const map = this.map;
 
-    L.marker(popups.easternKentuckyUniversity.coordinates)
-      .addTo(map)
-      .bindPopup(popups.easternKentuckyUniversity.content)
-      .openPopup();
+    // L.marker(popups.easternKentuckyUniversity.coordinates)
+    //   .addTo(map)
+    //   .bindPopup(popups.easternKentuckyUniversity.content)
+    //   .openPopup();
 
     function style(feature) {
       return getFeatureStyle(feature);

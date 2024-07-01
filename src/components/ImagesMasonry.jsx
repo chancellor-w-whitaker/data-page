@@ -25,10 +25,10 @@ const masonryItems = [
   },
   {
     image: "./images/service-region.png",
-    // link: "/leaflet",
-    description: "Coming soon!",
+    description:
+      "Interact with a Colorful Heatmap of KY Counties Fall 2024 Enrollment",
     title: "KY Service Region",
-    to: "/leaflet",
+    link: "https://www.irserver2.eku.edu/reports/serviceregion/",
     secret: true,
   },
   {

@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  build: { outDir: "docs" },
+  build: { outDir: "Y:/Reports/ServiceRegion" },
   plugins: [react()],
   base: "",
 });
