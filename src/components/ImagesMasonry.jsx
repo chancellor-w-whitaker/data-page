@@ -27,7 +27,7 @@ const masonryItems = [
     description:
       "Interact with a Colorful Heatmap of KY Counties Fall 2024 Enrollment",
     link: "https://www.irserver2.eku.edu/reports/serviceregion/",
-    image: "./images/service-region.png",
+    image: "./images/serviceregion.png",
     title: "KY Service Region",
     secret: false,
   },
