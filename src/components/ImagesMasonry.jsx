@@ -13,7 +13,7 @@ const masonryItems = [
     description:
       "Compare Annual Enrollment, Degrees Awarded, Retention Rates, Graduation Rates, & Credit Hours; Supporting Details Provided",
     link: "https://ir.eku.edu/factbook/",
-    image: "./images/factbook.png",
+    image: "./images/factbook.svg",
     title: "Factbook",
     secret: false,
   },
@@ -56,14 +56,14 @@ const masonryItems = [
     title: "Data Request Form",
     secret: true,
   },
-  {
-    description:
-      "Compare Annual Fall Enrollment, Degrees Awarded, Retention Rates, & Graduation Rates",
-    link: "https://www.irserver2.eku.edu/reports/deans/collegedepartment",
-    image: "./images/collegedepartment.png",
-    title: "College & Department Metrics",
-    secret: true,
-  },
+  // {
+  //   description:
+  //     "Compare Annual Fall Enrollment, Degrees Awarded, Retention Rates, & Graduation Rates",
+  //   link: "https://www.irserver2.eku.edu/reports/deans/collegedepartment",
+  //   image: "./images/collegedepartment.png",
+  //   title: "College & Department Metrics",
+  //   secret: true,
+  // },
   {
     description:
       "Compare Annual Fall Enrollment, Degrees Awarded, Retention Rates, Graduation Rates, Progression Rates, & DFW Rates of University or College",
@@ -155,13 +155,13 @@ const masonryItems = [
     title: "Day To Day Enrollment",
     secret: true,
   },
-  {
-    description: "Compare Results of Various University Surveys",
-    link: "https://ir.eku.edu/university-survey-results",
-    image: "./images/university-survey-results.png",
-    title: "Graduation By The Numbers",
-    secret: true,
-  },
+  // {
+  //   description: "Compare Results of Various University Surveys",
+  //   link: "https://ir.eku.edu/university-survey-results",
+  //   image: "./images/university-survey-results.png",
+  //   title: "Graduation By The Numbers",
+  //   secret: true,
+  // },
   {
     description: "Compare Annual KPI's of Each County in KY",
     link: "https://irserver2.eku.edu/Reports/SAS/Counties/",
