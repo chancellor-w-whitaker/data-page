@@ -6,6 +6,8 @@ import { TooltipContent, TooltipTrigger, Tooltip } from "./Tooltip";
 import { useElementSize } from "../hooks/useElementSize";
 import { useWidth } from "../WidthContext";
 
+const dataPage2 = true;
+
 const masonryItems = [
   {
     description:
@@ -210,11 +212,9 @@ const masonryItems = [
 export const ImagesMasonry = () => {
   const width = useWidth();
 
-  const dataPage2 = true;
-
   const filterCallback = useMemo(
     () => (dataPage2 ? () => true : ({ secret }) => !secret),
-    [dataPage2]
+    []
   );
 
   const data = useMemo(() => {
