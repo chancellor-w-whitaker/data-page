@@ -322,6 +322,35 @@ const masonryItems = [
     secret: true,
   },
   {
+    description: "Compare Annual Retention Rate of Varying Groups",
+    link: "https://irserver2.eku.edu/Reports/PC/RetentionRate/",
+    image: "./images/retentionrate.png",
+    title: "Retention Rates",
+    secret: true,
+  },
+  {
+    description: "Compare Annual Enrollment Recorded at Each Day of Semester",
+    link: "https://irserver2.eku.edu/Reports/pc/daytodayenrollment/",
+    image: "./images/daytodayenrollment.png",
+    title: "Day To Day Enrollment",
+    secret: true,
+  },
+  {
+    description:
+      "Compare Annual Campaign Report, Contribution Source Report, Eastern Fund, Board Participation, Endowment Market Performance, & Foundation Scholarships",
+    link: "https://irserver2.eku.edu/Reports/PC/Development/v01/",
+    title: "Development & Alumni Engagement",
+    image: "./images/development.png",
+    secret: true,
+  },
+  {
+    description: "Compare Statistics of the Four Main Freshman Demographics",
+    link: "https://irserver2.eku.edu/Reports/freshmanprofile/",
+    image: "./images/freshmanprofile.png",
+    title: "Freshman Profile",
+    secret: true,
+  },
+  {
     description:
       "Compare Weekly & Yearly Applied, Admitted, & Enrolled of Varying Groups",
     link: "https://irserver2.eku.edu/Reports/PC/Applications/",
@@ -337,35 +366,6 @@ const masonryItems = [
     secret: true,
   },
   {
-    description: "Compare Annual Retention Rate of Varying Groups",
-    link: "https://irserver2.eku.edu/Reports/PC/RetentionRate/",
-    image: "./images/retentionrate.png",
-    title: "Retention Rates",
-    secret: true,
-  },
-  {
-    description:
-      "Compare Regional University Performance in Different Metrics; Model to Calculate Performance can be Modified",
-    link: "https://irserver2.eku.edu/Reports/performancemodel/",
-    image: "./images/performancemodel.png",
-    title: "Performance Model",
-    secret: true,
-  },
-  {
-    description: "Compare Statistics of the Four Main Freshman Demographics",
-    link: "https://irserver2.eku.edu/Reports/freshmanprofile/",
-    image: "./images/freshmanprofile.png",
-    title: "Freshman Profile",
-    secret: true,
-  },
-  {
-    description: "Compare Annual Enrollment Recorded at Each Day of Semester",
-    link: "https://irserver2.eku.edu/Reports/pc/daytodayenrollment/",
-    image: "./images/daytodayenrollment.png",
-    title: "Day To Day Enrollment",
-    secret: true,
-  },
-  {
     description: "Compare Annual KPI's of Each County in KY",
     link: "https://irserver2.eku.edu/Reports/SAS/Counties/",
     image: "./images/counties.png",
@@ -373,11 +373,10 @@ const masonryItems = [
     secret: true,
   },
   {
-    description:
-      "Compare Faculty Workload within Varying Groups; Personal Workload Reports can be Generated",
-    link: "https://irserver2.eku.edu/reports/facultyworkload/",
-    image: "./images/facultyworkload.png",
-    title: "Faculty Workload",
+    description: "Compare Change in Enrollment within Various Measures",
+    link: "https://www.irserver2.eku.edu/reports/enrreport/",
+    image: "./images/enrreport.png",
+    title: "Enrollment Report",
     secret: true,
   },
   {
@@ -389,17 +388,18 @@ const masonryItems = [
   },
   {
     description:
-      "Compare Annual Campaign Report, Contribution Source Report, Eastern Fund, Board Participation, Endowment Market Performance, & Foundation Scholarships",
-    link: "https://irserver2.eku.edu/Reports/PC/Development/v01/",
-    title: "Development & Alumni Engagement",
-    image: "./images/development.png",
+      "Compare Faculty Workload within Varying Groups; Personal Workload Reports can be Generated",
+    link: "https://irserver2.eku.edu/reports/facultyworkload/",
+    image: "./images/facultyworkload.png",
+    title: "Faculty Workload",
     secret: true,
   },
   {
-    description: "Compare Change in Enrollment within Various Measures",
-    link: "https://www.irserver2.eku.edu/reports/enrreport/",
-    image: "./images/enrreport.png",
-    title: "Enrollment Report",
+    description:
+      "Compare Regional University Performance in Different Metrics; Model to Calculate Performance can be Modified",
+    link: "https://irserver2.eku.edu/Reports/performancemodel/",
+    image: "./images/performancemodel.png",
+    title: "Performance Model",
     secret: true,
   },
   {
