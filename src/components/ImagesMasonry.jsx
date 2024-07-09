@@ -223,7 +223,7 @@ const masonryItems = [
   {
     description:
       "Compare Annual Enrollment, Degrees Awarded, Retention Rates, Graduation Rates, & Credit Hours; Supporting Details Provided",
-    link: "https://ir.eku.edu/factbook/",
+    link: "https://irserver.eku.edu/factbook/",
     image: "./images/factbook.svg",
     title: "Factbook",
     secret: false,
