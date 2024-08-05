@@ -23,7 +23,7 @@ const filterCallback = dataPage2 ? () => true : ({ secret }) => !secret;
 export const Masonry = () => {
   const settings = usePromise({ promise: settingsPromise, initialState: {} });
 
-  const { assetPrefix, reportsUrl } = settings;
+  const { resourcesPath, reportsUrl } = settings;
 
   const reportsPromise = useMemo(
     () => reportsUrl && fetch(reportsUrl).then((response) => response.json()),
@@ -78,7 +78,7 @@ export const Masonry = () => {
                 height: "auto",
                 width: "100%",
               }}
-              assetPrefix={assetPrefix}
+              resourcesPath={resourcesPath}
               key={idx}
               {...item}
             />
@@ -96,12 +96,12 @@ export const Masonry = () => {
   );
 };
 
-const isAnAsset = (string) => string[0] === "/";
+const isResource = (string) => string[0] === "/";
 
 const Card = ({
+  resourcesPath,
   description,
   contentCard,
-  assetPrefix,
   children,
   image,
   title,
@@ -110,9 +110,9 @@ const Card = ({
 }) => {
   const [ref, { width: tooltipWidth }] = useElementSize();
 
-  const src = isAnAsset(image) ? `${assetPrefix}${image}` : image;
+  const src = isResource(image) ? `${resourcesPath}${image}` : image;
 
-  const href = isAnAsset(link) ? `${assetPrefix}${link}` : link;
+  const href = isResource(link) ? `${resourcesPath}${link}` : link;
 
   const anchor = (
     <a
