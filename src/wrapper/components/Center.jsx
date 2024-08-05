@@ -9,7 +9,6 @@ import {
 import * as portals from "react-reverse-portal";
 
 import { useEventListener } from "../../hooks/useEventListener";
-import { Button } from "./Button";
 
 const resetScrollersByClassName = (
   containerRef,
@@ -162,7 +161,7 @@ const useFullscreenPortal = (children, heading) => {
 
   return [portal, target, body, fullscreen];
 };
-const FullscreenModal = ({ modalName, heading, body }) => {
+const FullscreenModal = ({ modalName, body }) => {
   const label = modalName + "Label";
 
   return (
@@ -179,7 +178,6 @@ const FullscreenModal = ({ modalName, heading, body }) => {
             <div className="modal-header">
               <h1 className="modal-title fs-5" id={label}>
                 Eastern Kentucky University
-                {/* {heading} */}
               </h1>
               <button
                 data-bs-dismiss="modal"
@@ -189,37 +187,17 @@ const FullscreenModal = ({ modalName, heading, body }) => {
               />
             </div>
             <div className="modal-body">{body}</div>
-            {/* <div className="modal-footer">
-              <Button
-                backgroundColor="white"
-                type="button"
-                className="btn three-d-btn"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </Button>
-            </div> */}
           </div>
         </div>
       </div>
     </>
   );
 };
-function Page({ fullscreen, heading, portal, target, body }) {
+function Page({ portal, body }) {
   return (
     <>
       {portal}
-      {/* <Button
-        backgroundColor="white"
-        type="button"
-        data-bs-toggle="modal"
-        data-bs-target={target}
-        className="btn square-button rounded-0 border-0 position-absolute top-0 end-0"
-      >
-        <i className="fa-solid fa-up-right-and-down-left-from-center d-flex fs-4"></i>
-      </Button> */}
       {body}
-      {/* {fullscreen} */}
     </>
   );
 }
