@@ -8,8 +8,15 @@ import { usePromise } from "../hooks/usePromise";
 import { useWidth } from "../WidthContext";
 import { insert } from "../js/insert";
 
+// can you get base working on your end (with leading period)?
+// remove resource stuff
+
+console.log(import.meta.env.BASE_URL);
+
 const constants = {
-  settingsPromise: fetch("settings.json").then((response) => response.json()),
+  settingsPromise: fetch(`${import.meta.env.BASE_URL}/settings.json`).then(
+    (response) => response.json()
+  ),
   media: [576, 992, 1200, 1201],
   gap: [24, 24, 24, 24],
   columns: [1, 2, 3, 4],
@@ -23,7 +30,7 @@ const filterCallback = dataPage2 ? () => true : ({ secret }) => !secret;
 export const Masonry = () => {
   const settings = usePromise({ promise: settingsPromise, initialState: {} });
 
-  const { resourcesPath, reportsUrl } = settings;
+  const { reportsUrl } = settings;
 
   const reportsPromise = useMemo(
     () => reportsUrl && fetch(reportsUrl).then((response) => response.json()),
@@ -78,7 +85,6 @@ export const Masonry = () => {
                 height: "auto",
                 width: "100%",
               }}
-              resourcesPath={resourcesPath}
               key={idx}
               {...item}
             />
@@ -99,7 +105,6 @@ export const Masonry = () => {
 const isResource = (string) => string[0] === "/";
 
 const Card = ({
-  resourcesPath,
   description,
   contentCard,
   children,
@@ -110,9 +115,11 @@ const Card = ({
 }) => {
   const [ref, { width: tooltipWidth }] = useElementSize();
 
-  const src = isResource(image) ? `${resourcesPath}${image}` : image;
+  // seems to work with base appended & without base appended
 
-  const href = isResource(link) ? `${resourcesPath}${link}` : link;
+  const src = isResource(image) ? `${import.meta.env.BASE_URL}${image}` : image;
+
+  const href = isResource(link) ? `${import.meta.env.BASE_URL}${link}` : link;
 
   const anchor = (
     <a
