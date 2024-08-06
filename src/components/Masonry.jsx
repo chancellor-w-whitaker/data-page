@@ -4,28 +4,29 @@ import { useMemo } from "react";
 import { TooltipContent, TooltipTrigger, Tooltip } from "./Tooltip";
 import { useElementSize } from "../hooks/useElementSize";
 import { getColumnCount } from "../js/getColumnCount";
+import { renderBuiltUrl } from "../renderBuiltUrl";
 import { usePromise } from "../hooks/usePromise";
 import { useWidth } from "../WidthContext";
 import { insert } from "../js/insert";
 
-// can you get base working on your end (with leading period)?
-// remove resource stuff
+// stipulation--only known to be a static resource if begins with "/"
+// if you choose to write "./static/..." yourself, you will encounter no issues
 
-console.log(import.meta.env.BASE_URL);
+const isResource = (string) => string[0] === "/";
 
 const constants = {
-  settingsPromise: fetch(`${import.meta.env.BASE_URL}/settings.json`).then(
-    (response) => response.json()
-  ),
+  settingsFilename: "settings.json",
   media: [576, 992, 1200, 1201],
   gap: [24, 24, 24, 24],
   columns: [1, 2, 3, 4],
   dataPage2: false,
 };
 
-const { settingsPromise, dataPage2, columns, media, gap } = constants;
+const { settingsFilename, dataPage2, columns, media, gap } = constants;
 
-const filterCallback = dataPage2 ? () => true : ({ secret }) => !secret;
+const settingsUrl = renderBuiltUrl(settingsFilename);
+
+const settingsPromise = fetch(settingsUrl).then((response) => response.json());
 
 export const Masonry = () => {
   const settings = usePromise({ promise: settingsPromise, initialState: {} });
@@ -40,6 +41,8 @@ export const Masonry = () => {
   const reports = usePromise({ promise: reportsPromise, initialState: [] });
 
   const width = useWidth();
+
+  const filterCallback = dataPage2 ? () => true : ({ secret }) => !secret;
 
   const data = reports.filter(filterCallback);
 
@@ -81,19 +84,12 @@ export const Masonry = () => {
         <Plock
           render={(item, idx) => (
             <Card
-              style={{
-                height: "auto",
-                width: "100%",
-              }}
+              style={{ height: "auto", width: "100%" }}
               key={idx}
               {...item}
             />
           )}
-          config={{
-            columns,
-            media,
-            gap,
-          }}
+          config={{ columns, media, gap }}
           items={rearrangedData}
           className=""
         />
@@ -101,8 +97,6 @@ export const Masonry = () => {
     </>
   );
 };
-
-const isResource = (string) => string[0] === "/";
 
 const Card = ({
   description,
@@ -115,11 +109,9 @@ const Card = ({
 }) => {
   const [ref, { width: tooltipWidth }] = useElementSize();
 
-  // seems to work with base appended & without base appended
+  const src = isResource(image) ? renderBuiltUrl(image) : image;
 
-  const src = isResource(image) ? `${import.meta.env.BASE_URL}${image}` : image;
-
-  const href = isResource(link) ? `${import.meta.env.BASE_URL}${link}` : link;
+  const href = isResource(link) ? renderBuiltUrl(link) : link;
 
   const anchor = (
     <a
