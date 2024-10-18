@@ -1,6 +1,5 @@
 import { useRef, useId, memo } from "react";
 
-import { Master } from "../../components/Master";
 import { ColorPicker } from "./ColorPicker";
 import { SearchBar } from "./SearchBar";
 import { Header } from "./Header";
@@ -8,33 +7,39 @@ import { Center } from "./Center";
 import { Footer } from "./Footer";
 import "../../style.css";
 
-const App = memo(({ department, heading }) => {
-  const footerRef = useRef();
+const App = memo(
+  ({
+    department = "Institutional Effectiveness & Research",
+    heading = "Data Pages",
+    children,
+  }) => {
+    const footerRef = useRef();
 
-  return (
-    <>
-      <Header
-        colorPicker={<ColorPicker footerRef={footerRef} />}
-        searchBar={<SearchBar />}
-        department={department}
-      />
-      <div className="container-fluid">
-        <div className="row">
-          <div className="sidebar border border-right col-md-4 col-lg-3 p-0 bg-white dash-shadow">
-            <ExampleSidebar></ExampleSidebar>
-          </div>
-          <div
-            className="col-md-8 ms-sm-auto col-lg-9 px-md-4 py-md-4 bg-white border border-start-0 dash-shadow"
-            style={{ paddingBottom: 12, paddingTop: 12 }}
-          >
-            <Center children={<Master />} heading={heading} />
+    return (
+      <>
+        <Header
+          colorPicker={<ColorPicker footerRef={footerRef} />}
+          searchBar={<SearchBar />}
+          department={department}
+        />
+        <div className="container-fluid">
+          <div className="row">
+            <div className="sidebar border border-right col-md-4 col-lg-3 p-0 bg-white dash-shadow">
+              <ExampleSidebar></ExampleSidebar>
+            </div>
+            <div
+              className="col-md-8 ms-sm-auto col-lg-9 px-md-4 py-md-4 bg-white border border-start-0 dash-shadow"
+              style={{ paddingBottom: 12, paddingTop: 12 }}
+            >
+              <Center children={children} heading={heading} />
+            </div>
           </div>
         </div>
-      </div>
-      <Footer footerRef={footerRef} />
-    </>
-  );
-});
+        <Footer footerRef={footerRef} />
+      </>
+    );
+  }
+);
 
 export default App;
 
