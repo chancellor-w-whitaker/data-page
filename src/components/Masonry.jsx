@@ -340,15 +340,26 @@ export const Masonry = () => {
 };
 
 const Card = ({
-  description,
+  description: desc,
   contentCard,
   children,
-  title,
-  image,
+  title: header,
+  image: img,
   style,
-  link,
-  to,
+  link: a,
+  report_description,
+  report_link,
+  report_image_link,
+  report_title,
 }) => {
+  const description = desc ? desc : report_description;
+
+  const title = header ? header : report_title;
+
+  const image = img ? img : report_image_link;
+
+  const link = a ? a : report_link;
+
   const [ref, { width: tooltipWidth }] = useElementSize();
 
   const src = isResource(image) ? renderBuiltUrl(image) : image;
