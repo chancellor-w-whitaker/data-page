@@ -1,5 +1,17 @@
-import { useRef, useId, memo } from "react";
+import {
+  useDeferredValue,
+  useState,
+  useMemo,
+  useRef,
+  useId,
+  memo,
+} from "react";
 
+import { renderBuiltUrl } from "../../renderBuiltUrl";
+import { usePromise } from "../../hooks/usePromise";
+import { Masonry } from "../../components/Masonry";
+import { isDataPage2 } from "../../isDataPage2";
+import { getWords } from "../../js/getWords";
 import { ColorPicker } from "./ColorPicker";
 import { SearchBar } from "./SearchBar";
 import { Header } from "./Header";
@@ -7,19 +19,70 @@ import { Center } from "./Center";
 import { Footer } from "./Footer";
 import "../../style.css";
 
+const settingsFilename = "settings.json";
+
+const settingsUrl = renderBuiltUrl(settingsFilename);
+
+const settingsPromise = fetch(settingsUrl).then((response) => response.json());
+
+const filterCallback = isDataPage2 ? () => true : ({ secret }) => !secret;
+
+const reduceTitle = (title, report_title) =>
+  title === "Factbook" || report_title === "Factbook" ? 0 : 1;
+
 const App = memo(
   ({
     department = "Institutional Effectiveness & Research",
     heading = "Data Pages",
-    children,
   }) => {
     const footerRef = useRef();
+
+    const [query, setQuery] = useState("");
+
+    const deferredQuery = useDeferredValue(query);
+
+    const { reportsUrl } = usePromise({
+      promise: settingsPromise,
+      initialState: {},
+    });
+
+    const reportsPromise = useMemo(
+      () => reportsUrl && fetch(reportsUrl).then((response) => response.json()),
+      [reportsUrl]
+    );
+
+    const reports = usePromise({ promise: reportsPromise, initialState: [] });
+
+    const data = useMemo(
+      () =>
+        reports
+          .filter(filterCallback)
+          .sort(
+            (
+              { report_title: rta, title: ta },
+              { report_title: rtb, title: tb }
+            ) => reduceTitle(ta, rta) - reduceTitle(tb, rtb)
+          )
+          .map((element) => ({
+            ...element,
+            words: getWords(`${element.title} ${element.description}`),
+          })),
+      [reports]
+    );
+
+    const searchDisabled = data.length < 10;
 
     return (
       <>
         <Header
+          searchBar={
+            <SearchBar
+              onChange={(e) => setQuery(e.target.value)}
+              disabled={searchDisabled}
+              value={query}
+            />
+          }
           colorPicker={<ColorPicker footerRef={footerRef} />}
-          searchBar={<SearchBar />}
           department={department}
         />
         <div className="container-fluid">
@@ -31,7 +94,9 @@ const App = memo(
               className="col-md-8 ms-sm-auto col-lg-9 px-md-4 py-md-4 bg-white border border-start-0 dash-shadow"
               style={{ paddingBottom: 12, paddingTop: 12 }}
             >
-              <Center children={children} heading={heading} />
+              <Center heading={heading}>
+                <Masonry query={deferredQuery} data={data}></Masonry>
+              </Center>
             </div>
           </div>
         </div>
@@ -40,6 +105,8 @@ const App = memo(
     );
   }
 );
+
+App.displayName = "App";
 
 export default App;
 

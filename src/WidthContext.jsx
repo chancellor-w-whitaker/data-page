@@ -2,21 +2,20 @@ import { createContext, useContext } from "react";
 
 const WidthContext = createContext(null);
 
-export function WidthProvider({ children }) {
-  const [squareRef, { width = 0 }] = useElementSize();
-
-  return (
-    <div ref={squareRef}>
-      <WidthContext.Provider value={width}>{children}</WidthContext.Provider>
-    </div>
-  );
-}
-
 export function useWidth() {
   return useContext(WidthContext);
 }
 
 import { useCallback, useEffect, useState } from "react";
+
+function useWindowListener(eventType, listener) {
+  useEffect(() => {
+    window.addEventListener(eventType, listener);
+    return () => {
+      window.removeEventListener(eventType, listener);
+    };
+  }, [eventType, listener]);
+}
 
 /**
  * @deprecated - Use `useResizeObserver` instead.
@@ -37,7 +36,7 @@ import { useCallback, useEffect, useState } from "react";
  *   </div>
  * );
  */
-export function useElementSize(options = {}) {
+function useElementSize(options = {}) {
   const { initializeWithValue = true } = options;
 
   // Mutable values like 'ref.current' aren't valid dependencies
@@ -84,11 +83,12 @@ export function useElementSize(options = {}) {
   return result;
 }
 
-export function useWindowListener(eventType, listener) {
-  useEffect(() => {
-    window.addEventListener(eventType, listener);
-    return () => {
-      window.removeEventListener(eventType, listener);
-    };
-  }, [eventType, listener]);
+export function WidthProvider({ children }) {
+  const [squareRef, { width = 0 }] = useElementSize();
+
+  return (
+    <div ref={squareRef}>
+      <WidthContext.Provider value={width}>{children}</WidthContext.Provider>
+    </div>
+  );
 }

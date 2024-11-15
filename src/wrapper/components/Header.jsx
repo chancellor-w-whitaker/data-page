@@ -63,7 +63,7 @@ export function Header({ colorPicker, department, searchBar }) {
         </button>
         <div className="collapse navbar-collapse" id="navbarsExample07">
           <div className="navbar-nav my-2 my-lg-0 gap-lg-3 ms-auto">
-            <div className="nav-link py-0 py-lg-2 px-lg-0">
+            {/* <div className="nav-link py-0 py-lg-2 px-lg-0">
               <div className="py-2 py-lg-0">{colorPicker}</div>
             </div>
             <div className="nav-link py-0 py-lg-2 px-lg-0 text-nowrap">
@@ -75,7 +75,7 @@ export function Header({ colorPicker, department, searchBar }) {
               >
                 A-Z Index
               </a>
-            </div>
+            </div> */}
           </div>
           {searchBar}
         </div>

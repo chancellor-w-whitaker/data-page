@@ -13,7 +13,7 @@ export default defineConfig({
     renderBuiltUrl: (filename) =>
       `.${base}${filename[0] === "/" ? "" : "/"}${filename}`,
   },
-  build: { outDir, emptyOutDir: true },
+  build: { emptyOutDir: true, outDir },
   plugins: [react()],
   base,
 });

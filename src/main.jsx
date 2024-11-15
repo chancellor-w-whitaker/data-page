@@ -4,14 +4,11 @@ import React from "react";
 
 import { WidthProvider } from "./WidthContext";
 import App from "./wrapper/components/App";
-import { Masonry } from "./components/Masonry";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <WidthProvider>
-      <App>
-        <Masonry></Masonry>
-      </App>
+      <App></App>
       {/* <LeafletApp></LeafletApp> */}
       {/* <Router>
         <Routes>
